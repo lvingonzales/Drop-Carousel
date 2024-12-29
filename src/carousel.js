@@ -12,6 +12,7 @@ const carouselControl = document.getElementById ('carousel-control');
 let imageElements = [];
 let currentImage = 0;
 let shapes = [];
+let interval = setInterval(timedScroll, 5000)
 
 function initializeCarousel () {
     console.log (images);
@@ -29,6 +30,12 @@ function initializeCarousel () {
         svg.setAttribute("width", "24px");
         svg.setAttribute("height", "24px");
         svg.dataset.pos = images.indexOf(image);
+        svg.addEventListener("mouseover", () => {
+            shape.setAttribute('fill', 'black');
+        })
+        svg.addEventListener("mouseout", () => {
+            shape.setAttribute('fill', 'none');
+        })
 
         shape.setAttribute("cx", "12");
         shape.setAttribute("cy", "12");
@@ -36,11 +43,41 @@ function initializeCarousel () {
         shape.setAttribute("stroke", "black");
         shape.setAttribute("stroke-width", "1");
         shape.setAttribute("fill", "none");
+        
+        shapes.push (shape);
         svg.append(shape);
         carouselControl.append(svg);
     })
 
+    let svgs = document.querySelectorAll ('svg');
+    svgs.forEach(shape =>{
+        shape.addEventListener('click', () => {
+            clearInterval(interval);
+            changePicture(shape.dataset.pos);
+            interval = setInterval(timedScroll, 5000);
+        });
+    })
+
     console.log (imageElements);
+    loadImages();
+}
+
+function timedScroll () {
+    currentImage++;
+    if (currentImage >= images.length){currentImage = 0;}
+    changePicture(currentImage);
+}
+
+function changePicture (index) {
+    currentImage = Number(index);
+    console.log(typeof currentImage);
+    shapes.forEach(shape => {
+        if (shapes.indexOf(shape) !== currentImage){
+            shape.setAttribute("fill", "none");
+        } else {
+            shape.setAttribute("fill", "black");
+        }
+    })
     loadImages();
 }
 
